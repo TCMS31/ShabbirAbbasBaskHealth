@@ -237,3 +237,39 @@ describe("health probes", () => {
     assert.equal(response.body.storage, "memory");
   });
 });
+
+describe("storage failures", () => {
+  let app;
+
+  before(async () => {
+    app = await startTestApp();
+  });
+
+  after(async () => {
+    await app.close();
+  });
+
+  test("a rejected lookup reaches the error handler as an opaque 500", async () => {
+    app.repository.findByShortCode = async () => {
+      throw new Error("connect ECONNREFUSED db.internal:3306");
+    };
+
+    const response = await app.request("/AbCd1234");
+
+    assert.equal(response.status, 500);
+    assert.equal(response.body.error.code, "INTERNAL_ERROR");
+    assert.match(response.body.error.details.incidentId, /^[0-9a-f-]{36}$/);
+    assert.ok(!JSON.stringify(response.body).includes("db.internal"));
+  });
+
+  test("readiness turns 503 when the store stops answering", async () => {
+    app.repository.ping = async () => {
+      throw new Error("pool closed");
+    };
+
+    const response = await app.request("/readyz");
+
+    assert.equal(response.status, 503);
+    assert.deepEqual(response.body, { status: "unavailable", storage: "memory" });
+  });
+});

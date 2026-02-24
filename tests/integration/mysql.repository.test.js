@@ -8,10 +8,11 @@ import { DuplicateShortCodeError } from "../../src/utils/errors.js";
  * Exercises the raw SQL against a real MySQL server.
  *
  * Opt-in: the suite is skipped unless TEST_MYSQL=1, so `npm test` stays
- * runnable on a laptop with no database. CI (and the evidence capture in
- * docs/) runs it with a throwaway server.
+ * runnable on a laptop with no database. Point it at a throwaway database
+ * whose schema has been applied first:
  *
- *   TEST_MYSQL=1 DB_PORT=8526 DB_NAME=url_shortener_test npm test
+ *   DB_NAME=url_shortener_test npm run db:init
+ *   DB_NAME=url_shortener_test npm run test:mysql
  */
 const enabled = process.env.TEST_MYSQL === "1";
 
