@@ -44,5 +44,17 @@ export const normalizeLongUrl = (candidateUrl) => {
     throw createValidationError("URL must include a host.");
   }
 
-  return parsedUrl.toString();
+  // Percent-encoding can grow the string well past the raw input (each
+  // non-ASCII character becomes up to 12 bytes), so the cap is applied to what
+  // is actually stored and later sent in the Location header.
+  const normalizedUrl = parsedUrl.toString();
+
+  if (normalizedUrl.length > MAX_URL_LENGTH) {
+    throw createValidationError(`URL must be at most ${MAX_URL_LENGTH} characters once encoded.`, {
+      maxLength: MAX_URL_LENGTH,
+      actualLength: normalizedUrl.length,
+    });
+  }
+
+  return normalizedUrl;
 };

@@ -5,6 +5,9 @@ export const CODE_ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX
 
 export const DEFAULT_CODE_LENGTH = 8;
 
+/** Width of `urls.short_code` (VARCHAR(16)); longer codes cannot be stored. */
+export const MAX_CODE_LENGTH = 16;
+
 const SHORT_CODE_PATTERN = /^[A-Za-z0-9]+$/;
 
 /**
@@ -39,7 +42,7 @@ export const createShortCodeGenerator = ({
  * Cheap shape check used before touching the database. A request for
  * `/favicon.ico` or a 4 KB path is rejected without a query.
  */
-export const isPlausibleShortCode = (value, maxLength = 16) =>
+export const isPlausibleShortCode = (value, maxLength = MAX_CODE_LENGTH) =>
   typeof value === "string" &&
   value.length > 0 &&
   value.length <= maxLength &&

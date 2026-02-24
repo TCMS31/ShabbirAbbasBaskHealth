@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { parseBoolean, parseInteger } from "../utils/number.js";
-import { DEFAULT_CODE_LENGTH } from "../utils/shortCode.js";
+import { DEFAULT_CODE_LENGTH, MAX_CODE_LENGTH } from "../utils/shortCode.js";
 
 dotenv.config({ quiet: true });
 
@@ -69,6 +69,14 @@ export const loadConfig = (env = process.env) => {
       maxTrackedClients: parseInteger(env.RATE_LIMIT_MAX_CLIENTS, 100_000),
     },
   };
+
+  // Fail at startup rather than on every POST: a longer code would be
+  // rejected by the column and then by the redirect path's shape check.
+  if (config.shortCode.length > MAX_CODE_LENGTH) {
+    throw new RangeError(
+      `SHORT_CODE_LENGTH must be at most ${MAX_CODE_LENGTH} (got ${config.shortCode.length}).`,
+    );
+  }
 
   return Object.freeze(config);
 };

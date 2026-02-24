@@ -41,6 +41,11 @@ describe("loadConfig", () => {
     assert.equal(loadConfig({ CLICK_IP_MODE: "hashed" }).clicks.ipMode, "full");
   });
 
+  test("refuses a short code length the schema cannot store", () => {
+    assert.throws(() => loadConfig({ SHORT_CODE_LENGTH: "17" }), RangeError);
+    assert.equal(loadConfig({ SHORT_CODE_LENGTH: "16" }).shortCode.length, 16);
+  });
+
   test("returns a frozen configuration", () => {
     const config = loadConfig({});
     assert.throws(() => {

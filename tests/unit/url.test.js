@@ -54,6 +54,11 @@ describe("normalizeLongUrl", () => {
     assert.equal(error.details.maxLength, MAX_URL_LENGTH);
   });
 
+  test("applies the length cap to the percent-encoded form", () => {
+    const error = expectValidationError(`https://example.com/${"\u00e9".repeat(1_000)}`);
+    assert.ok(error.details.actualLength > MAX_URL_LENGTH);
+  });
+
   test("percent-encodes CR/LF so a stored URL cannot inject a response header", () => {
     const normalized = normalizeLongUrl("https://example.com/a\r\nX-Injected: 1");
     assert.ok(!normalized.includes("\r"));
