@@ -84,6 +84,28 @@ describe("createRateLimiter", () => {
     assert.ok(limiter.size <= 5, `expected <= 5 tracked clients, got ${limiter.size}`);
   });
 
+  test("evicts the oldest window, not the client whose window just renewed", () => {
+    let currentTime = 0;
+    const limiter = createRateLimiter({
+      maxRequests: 3,
+      windowMs: 100,
+      maxTrackedClients: 2,
+      now: () => currentTime,
+    });
+
+    runRequest(limiter, "198.51.100.1");
+    currentTime = 50;
+    runRequest(limiter, "198.51.100.2");
+    currentTime = 110;
+    runRequest(limiter, "198.51.100.1");
+    currentTime = 120;
+    runRequest(limiter, "198.51.100.3");
+
+    assert.equal(limiter.size, 2);
+    const { res } = runRequest(limiter, "198.51.100.1");
+    assert.equal(res.headers["RateLimit-Remaining"], "1");
+  });
+
   test("stop() clears the sweep timer so instances do not leak", () => {
     const limiter = createRateLimiter({ maxRequests: 1, windowMs: 10, cleanupIntervalMs: 10 });
 

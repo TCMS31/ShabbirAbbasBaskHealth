@@ -58,6 +58,9 @@ export const createRateLimiter = ({
     const bucket = buckets.get(clientKey);
 
     if (!bucket || timestamp >= bucket.resetAt) {
+      // Re-inserting moves the key to the end of the Map, so insertion order
+      // keeps tracking window age and eviction drops the oldest window.
+      buckets.delete(clientKey);
       evictOldestIfFull();
       buckets.set(clientKey, { count: 1, resetAt: timestamp + windowMs });
       setRateLimitHeaders(res, maxRequests, maxRequests - 1, timestamp + windowMs);
