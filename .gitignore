@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Local Python virtualenv occasionally created alongside this repo
+project_venv/
+
+# Environment files (the template is committed)
+.env
+.env.*
+!.env.example
+
+# Build output, caches and test artefacts
+dist/
+build/
+coverage/
+.cache/
+.eslintcache
+tmp/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# OS / editor noise
+.DS_Store
+.vscode/
+.idea/
+
+# Never versioned here
+.github/
