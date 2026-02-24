@@ -3,8 +3,8 @@
  *
  * Fires `BENCH_REQUESTS` GETs at a short URL with `BENCH_CONCURRENCY` workers
  * and reports latency percentiles. Used to compare the redirect path with and
- * without the read-through cache; the numbers quoted in the README came from
- * this script.
+ * without the read-through cache; the numbers in docs/performance.md came
+ * from this script.
  *
  *   BENCH_URL=http://localhost:8520/AbC12xyZ node scripts/bench-redirect.js
  */

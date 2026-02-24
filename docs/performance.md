@@ -59,7 +59,8 @@ build was run here. Against it the batching writer is a ~48x reduction in write
 statements, and the visitor waits on none of them, since the `302` is returned as
 soon as the destination is known.
 
-The cost of that trade is stated in the README's limitations: `click_count` is
+The cost of that trade is stated in the README's "How a request flows"
+section: `click_count` is
 eventually consistent within `CLICK_FLUSH_MS`, and a `SIGKILL` can lose at most
 one buffer of clicks. `SIGTERM` flushes before exit.
 
