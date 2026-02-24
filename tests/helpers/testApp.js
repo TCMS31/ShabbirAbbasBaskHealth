@@ -45,7 +45,7 @@ export const startTestApp = async (env = {}) => {
       });
 
       const text = await response.text();
-      let body = null;
+      let body;
 
       try {
         body = text === "" ? null : JSON.parse(text);
