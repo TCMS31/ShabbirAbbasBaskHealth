@@ -1,11 +1,13 @@
 services:
   mysql:
     image: mysql:8.4
+    # Passwordless root is for local development only, which is why the
+    # port below is published on loopback and nowhere else.
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: ${DB_NAME:-url_shortener}
     ports:
-      - "${DB_HOST_PORT:-3306}:3306"
+      - "127.0.0.1:${DB_HOST_PORT:-3306}:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
@@ -38,7 +40,7 @@ services:
       context: .
       target: runtime
     ports:
-      - "${APP_HOST_PORT:-3000}:3000"
+      - "127.0.0.1:${APP_HOST_PORT:-3000}:3000"
     environment:
       NODE_ENV: production
       PORT: "3000"
